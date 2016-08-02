@@ -7,6 +7,6 @@ Technologies: Node.js, JSON
 ---
 
 #### Healthcare Applications Suite for Amazon Echo
-- Alexa Symptom Checker
+- Symptom Checker
 - Health assessments
 - Personality test
