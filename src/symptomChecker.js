@@ -13,119 +13,63 @@ var questions = [
         ]
     },
     {
-        "Do you feel down or hopeless?": [
+        "What is a symptom you are experiencing?": [
             "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Do you have trouble falling or staying asleep?": [
-             "No",
-            "Sometimes",
-            "Regularly"
-        ]
-    },
-    {
-        "Do you sleep too much?" : [
-             "No",
-            "Sometimes",
-            "Regularly"
-            ]
-    },
-    {
-        "Do you feel tired or have little energy? ": [
-             "No",
-            "Sometimes",
-            "Regularly"
-        ]
-    },
-    {
-        "Have you lost your appetite? ": [
-           "No",
-            "Sometimes",
-            "Regularly"
-        ]
-    },
-    {
-        "Are you overeating? ": [
-          "No",
-            "Sometimes",
-            "Regularly"
-        ]
-    },
-    {
-        "Are you feeling bad about yourself, or like you are a failure or that you have let yourself or your family down? ": [
+        "What is a symptom you are experiencing?": [
             "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Do you have trouble concentrating on things, such as reading the newspaper or watching television? ": [
-            "No",
-            "Sometimes",
-            "Yes"
-        ]
-    },
-    {
-        "Do you move or speak so slowly that other people have noticed?": [
+        "What is a symptom you are experiencing?": [
             "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Do you every have thoughts that you would be better off dead? ": [
-             "No",
-            "Sometimes",
-            "Regularly"
-        ]
-    },
-    {
-        "Do you ever think about hurting yourself? ": [
+        "What is a symptom you are experiencing?": [
             "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Do you have difficulty making decisions?": [
-             "No",
-            "Sometimes",
-            "Regularly"
-        ]
-    },
-    {
-        "Do you have difficulty remembering details? ": [
+        "What is a symptom you are experiencing?": [
             "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Do you have difficulty concentrating? ": [
-           "No",
-           "Sometimes",
-            "Regularly"
-        ]
-    },
-    {
-        "Do you have persistent aches or pains, headaches, or cramps that do not ease even with treatment? ": [
+        "What is a symptom you are experiencing?": [
             "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Do you have restlessness? ": [
-             "No",
+        "What is a symptom you are experiencing?": [
+            "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Do you feel fatigued? ": [
+        "What is a symptom you are experiencing?": [
+            "No",
+            "Sometimes",
+            "Regularly"
+        ]
+    },
+    {
+        "What is a symptom you are experiencing?": [
             "No",
             "Sometimes",
             "Regularly"
@@ -256,7 +200,7 @@ function getWelcomeResponse(callback){
     var sessionAttributes = {},
     speechOutput = "Hello, I will ask you to tell me your symptoms and based on your response, I will try to determine why you're not feeling well. Let's begin. ",
             shouldEndSession = false,
-            gameQuestions = [0],
+            gameQuestions = [0, 1, 2, 3, 4, 5, 6, 7],
             correctAnswerIndex = 0, //roundAnswers deleted
             currentQuestionIndex = 0,
             roundAnswers = ["No", "Sometimes", "Regularly"],
@@ -288,6 +232,8 @@ function handleAnswerRequest(intent, session, callback) {
     var answerSlotValid = isAnswerSlotValid(intent);
     var speechOutputAnalysis = "";
     var userGaveUp = intent.name === "DontKnowIntent";
+    var coldScore = parseInt(session.attributes.coldScore);
+    var fluScore = parseInt(session.attributes.fluScore);
 
     console.log("intent test " + intent);
     console.log(intent);
@@ -312,7 +258,6 @@ function handleAnswerRequest(intent, session, callback) {
         if (answerSlotValid && intent.slots.Answer.value == "sore throat") {
             coldScore++;
             fluScore++;
-            console.log()
         }
         else if (answerSlotValid && intent.slots.Answer.value == "runny nose") {
             coldScore++;
@@ -344,7 +289,7 @@ function handleAnswerRequest(intent, session, callback) {
                 speechOutput = "I'm sorry, I can't seem to figure out why you're not feeling well. Please seek medical assistance.";
             }
             else if (fluScore == coldScore) {
-                speechOutput = "You probably have a cold but you may have the flu. Over-the-counter cold medicine can be used to relieve these symptoms. If you experience fever, headache, or muscle soreness, you should seem medical attention.";
+                speechOutput = "You probably have a cold but you may have the flu. Over-the-counter cold medicine can be used to relieve these symptoms. If you experience fever, headache, or muscle soreness, you should seek medical attention.";
             }
             callback(session.attributes,
                 buildSpeechletResponse(CARD_TITLE, speechOutput, "", true));
@@ -355,7 +300,7 @@ function handleAnswerRequest(intent, session, callback) {
             // Generate a random index for the correct answer, from 0 to 3
             correctAnswerIndex = 0;
             var roundAnswers = ["No", "Sometimes", "Regularly"];
-            repromptText = "Is there another symptom you are experiencing? If not, say no more. ";
+            var repromptText = "Is there another symptom you are experiencing? If not, say no more. ";
             //speechOutput += userGaveUp ? "" : "That answer is ";
             speechOutput = repromptText;
 
@@ -460,7 +405,7 @@ function handleFinishSessionRequest(intent, session, callback) {
 }
 
 function isAnswerSlotValid(intent) {
-    return !isNaN(parseInt(intent.slots.Answer.value)) && parseInt(intent.slots.Answer.value) < 4 && parseInt(intent.slots.Answer.value) > 0;
+    return true;
 }
 
 // ------- Helper functions to build responses -------
