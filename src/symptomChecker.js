@@ -310,10 +310,10 @@ function handleAnswerRequest(intent, session, callback) {
                 speechOutput = "You probably have a cold but you may have the flu. Over-the-counter cold medicine can be used to relieve these symptoms. If you experience fever, headache, or muscle soreness, you should seek medical attention.";
             }
             else if (pneumoniaScore == fluScore) {
-                speechOutput = "You probably have a cold but you may have the flu or pneumonia. Over-the-counter cold medicine can be used to relieve these symptoms. If you experience fever, headache, or muscle soreness, you should seek medical attention.";
+                speechOutput = "You probably have a cold but you may have the flu or pneumonia. Over-the-counter cold medicine can be used to relieve these symptoms. If you experience fever, headache, or muscle soreness, you should seek medical attention.";0
             }
             else if (pneumoniaScore > fluScore) {
-                speechOutput = "You probably have a pneumonia. You should seek medical attention.";
+                speechOutput = "You probably have pneumonia. You should seek medical attention.";
             }
             callback(session.attributes,
                 buildSpeechletResponse(CARD_TITLE, speechOutput, "", true));
@@ -336,6 +336,7 @@ function handleAnswerRequest(intent, session, callback) {
                 "questions": gameQuestions,
                 "coldScore": coldScore,
                 "fluScore": fluScore,
+                "pneumoniaScore": pneumoniaScore,
                 "correctAnswerText":
                     questions[gameQuestions[currentQuestionIndex]][Object.keys(questions[gameQuestions[currentQuestionIndex]])[0]][0]
             };
