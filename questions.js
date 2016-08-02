@@ -284,6 +284,7 @@ function handleAnswerRequest(intent, session, callback) {
     var sessionAttributes = {};
     var gameInProgress = session.attributes && session.attributes.questions;
     var answerSlotValid = isAnswerSlotValid(intent);
+    var speechOutputAnalysis = "";
     //var userGaveUp = intent.name === "DontKnowIntent";
 
     if (!gameInProgress) {
@@ -297,7 +298,7 @@ function handleAnswerRequest(intent, session, callback) {
         // If the user provided answer isn't a number > 0 and < ANSWER_COUNT,
         // return an error message to the user. Remember to guide the user into providing correct values.
         var reprompt = session.attributes.speechOutput;
-        var speechOutput = "Your answer must be a number between 1 and " + ANSWER_COUNT + ". " + reprompt;
+        speechOutput = "Your answer must be a number between 1 and " + ANSWER_COUNT + ". " + reprompt;
         callback(session.attributes,
             buildSpeechletResponse(CARD_TITLE, speechOutput, reprompt, false));
     } else {
@@ -307,7 +308,7 @@ function handleAnswerRequest(intent, session, callback) {
             currentQuestionIndex = parseInt(session.attributes.currentQuestionIndex),
             //correctAnswerText = session.attributes.correctAnswerText;
 
-        var speechOutputAnalysis = "";
+        speechOutputAnalysis = "";
 
         if (answerSlotValid && parseInt(intent.slots.Answer.value) == correctAnswerIndex) {
             currentScore++;
