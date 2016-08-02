@@ -6,126 +6,126 @@
  */
 var questions = [
     {
-        "Do you feel anxious or nervous when you are around your partner?": [
+        "Do you take little interest or pleasure in doing things?": [
             "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Do you watch what you are doing in order to avoid making your partner angry or upset?": [
+        "Do you feel down or hopeless?": [
             "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Do you feel obligated or coerced into having sex with your partner? ": [
+        "Do you have trouble falling or staying asleep?": [
              "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Are you afraid of voicing a different opinion than your partner? ": [
+        "Do you sleep too much?" : [
              "No",
             "Sometimes",
             "Regularly"
             ]
     },
     {
-        "Does your partner criticize you or embarrass you in front of others? ": [
+        "Do you feel tired or have little energy? ": [
              "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Does your partner check up on what you have been doing, and not believe your answers? ": [
+        "Have you lost your appetite? ": [
            "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Is your partner jealous, such as accusng you of having affairs? ": [
+        "Are you overeating? ": [
           "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Does your partner tell you that he or she will stop beating you when you start behaving yourself? ": [
+        "Are you feeling bad about yourself, or like you are a failure or that you have let yourself or your family down? ": [
             "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Have you stopped seeing your friends or family because of your partner's behavior? ": [
+        "Do you have trouble concentrating on things, such as reading the newspaper or watching television? ": [
             "No",
             "Sometimes",
             "Yes"
         ]
     },
     {
-        "Does your partner's behavior make you feel as if you are wrong?": [
+        "Do you move or speak so slowly that other people have noticed?": [
             "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Does your partner threaten to harm you? ": [
+        "Do you every have thoughts that you would be better off dead? ": [
              "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Do you try to please your partner rather than yourself in order to avoid being hurt? ": [
+        "Do you ever think about hurting yourself? ": [
             "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Does your partner keep you from going out or doing things that you want to do?": [
+        "Do you have difficulty making decisions?": [
              "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Do you feel that nothing you do is ever good enough for your partner? ": [
+        "Do you have difficulty remembering details? ": [
             "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Does your partner say that if you try to leave him or her, you will never see your children again? ": [
+        "Do you have difficulty concentrating? ": [
            "No",
            "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Does your partner say that if you try to leave, he or she will kill himself or herself or you? ": [
+        "Do you have persistent aches or pains, headaches, or cramps that do not ease even with treatment? ": [
             "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Do you have to make up excuses for your partner's behavior? ": [
+        "Do you have restlessness? ": [
              "No",
             "Sometimes",
             "Regularly"
         ]
     },
     {
-        "Do you lie to your family, friends and doctor about your bruises, cuts and scratches? ": [
+        "Do you feel fatigued? ": [
             "No",
             "Sometimes",
             "Regularly"
@@ -328,13 +328,13 @@ function handleAnswerRequest(intent, session, callback) {
             speechOutput += speechOutputAnalysis + "Your final score is " + currentScore.toString() + " out of "
                 + GAME_LENGTH.toString() + ". ";
                 if (currentScore > 12) {
-                    speechOutput += "Although you may be facing problems in your relationship, they are probably not the result of domestic abuse.";
+                    speechOutput += "Although you may be feeling down, try spending time with friends or family.";
                 }
                 else if (currentScore > 7) {
-                    speechOutput += "Domestic abuse could be an issue in your relationship. Seek further help.";
+                    speechOutput += "You may be suffering from depression. Seek further help.";
                 }
                 else {
-                    speechOutput += "Domestic abuse appears to be a serious problem in your relationship. Please seek professional help.";
+                    speechOutput += "You are probably suffering from depression. Please seek professional help.";
                 }
             callback(session.attributes,
                 buildSpeechletResponse(CARD_TITLE, speechOutput, "", true));
