@@ -254,7 +254,7 @@ var CARD_TITLE = "Quiz";
 
 function getWelcomeResponse(callback){
     var sessionAttributes = {},
-    speechOutput = "I will ask you " + GAME_LENGTH.toString()
+    speechOutput = "Wikipedia defines domestic violence as a pattern of behavior which involves violence or other abuse by one person against another in a domestic setting. I will ask you " + GAME_LENGTH.toString()
             + " questions, please answer these questions honestly to get an accurate assessment of the health of your relationship. Let's begin. ",
             shouldEndSession = false,
             gameQuestions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
