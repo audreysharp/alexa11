@@ -226,6 +226,8 @@ function onIntent(intentRequest, session, callback) {
         handleRepeatRequest(intent, session, callback);
     } else if ("AMAZON.HelpIntent" === intentName) {
         handleGetHelpRequest(intent, session, callback);
+    } else if ("DontKnowIntent" === intentName) {       
+            handleAnswerRequest(intent, session, callback);
     } else if ("AMAZON.StopIntent" === intentName) {
         handleFinishSessionRequest(intent, session, callback);
     } else if ("AMAZON.CancelIntent" === intentName) {
@@ -255,14 +257,16 @@ function getWelcomeResponse(callback){
     speechOutput = "I will ask you " + GAME_LENGTH.toString()
             + " questions, please answer these questions honestly to get an accurate assessment of the health of your relationship. Let's begin. ",
             shouldEndSession = false,
-            gameQuestions = questions,
+            gameQuestions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
             correctAnswerIndex = 0, //roundAnswers deleted
             currentQuestionIndex = 0,
-            spokenQuestion = Object.keys(questions[currentQuestionIndex])[0],
+            roundAnswers = ["No", "Sometimes", "Regularly"],
+            spokenQuestion = Object.keys(questions[gameQuestions[currentQuestionIndex]])[0],
             repromptText = "Question 1. " + spokenQuestion + " ",
             i, j;
             for (i = 0; i < ANSWER_COUNT; i++) {
-                repromptText += (i+1).toString() + ". " + Object.keys(questions[currentQuestionIndex])[i+1] + ". "
+                //repromptText += (i+1).toString() + ". " + Object.keys(questions[currentQuestionIndex])[i+1] + ". "
+                repromptText += (i+1).toString() + ". " + roundAnswers[i] + ", "
             }
     speechOutput += repromptText;
     sessionAttributes = {
@@ -271,7 +275,9 @@ function getWelcomeResponse(callback){
         "currentQuestionIndex": currentQuestionIndex,
         "correctAnswerIndex": correctAnswerIndex,
         "questions": gameQuestions,
-        "score": 0
+        "score": 0,
+        "correctAnswerText":
+            questions[gameQuestions[currentQuestionIndex]][Object.keys(questions[gameQuestions[currentQuestionIndex]])[0]][0]
         //correct answer not relevant
     };
     callback(sessionAttributes,
@@ -285,7 +291,10 @@ function handleAnswerRequest(intent, session, callback) {
     var gameInProgress = session.attributes && session.attributes.questions;
     var answerSlotValid = isAnswerSlotValid(intent);
     var speechOutputAnalysis = "";
-    //var userGaveUp = intent.name === "DontKnowIntent";
+    var userGaveUp = intent.name === "DontKnowIntent";
+
+    console.log("intent test " + intent);
+    console.log(intent);
 
     if (!gameInProgress) {
         // If the user responded with an answer but there is no game in progress, ask the user
@@ -294,7 +303,7 @@ function handleAnswerRequest(intent, session, callback) {
         speechOutput = "There is no test in progress. Do you want to administer a new test? ";
         callback(sessionAttributes,
             buildSpeechletResponse(CARD_TITLE, speechOutput, speechOutput, false));
-    } else if (!answerSlotValid) {
+    } else if (!answerSlotValid && !userGaveUp) {
         // If the user provided answer isn't a number > 0 and < ANSWER_COUNT,
         // return an error message to the user. Remember to guide the user into providing correct values.
         var reprompt = session.attributes.speechOutput;
@@ -306,11 +315,11 @@ function handleAnswerRequest(intent, session, callback) {
             correctAnswerIndex = parseInt(session.attributes.correctAnswerIndex),
             currentScore = parseInt(session.attributes.score),
             currentQuestionIndex = parseInt(session.attributes.currentQuestionIndex),
-            //correctAnswerText = session.attributes.correctAnswerText;
+            correctAnswerText = session.attributes.correctAnswerText;
 
         speechOutputAnalysis = "";
 
-        if (answerSlotValid && parseInt(intent.slots.Answer.value) == correctAnswerIndex) {
+        if (answerSlotValid && parseInt(intent.slots.Answer.value) == correctAnswerIndex+1) {
             currentScore++;
         }
         // if currentQuestionIndex is 4, we've reached 5 questions (zero-indexed) and can exit the game session
@@ -329,20 +338,21 @@ function handleAnswerRequest(intent, session, callback) {
                 }
             callback(session.attributes,
                 buildSpeechletResponse(CARD_TITLE, speechOutput, "", true));
-        } else {
+        }
+         else {
             currentQuestionIndex += 1;
             var spokenQuestion = Object.keys(questions[gameQuestions[currentQuestionIndex]])[0];
             // Generate a random index for the correct answer, from 0 to 3
-            //correctAnswerIndex = Math.floor(Math.random() * (ANSWER_COUNT));
-            //var roundAnswers = populateRoundAnswers(gameQuestions, currentQuestionIndex, correctAnswerIndex),
+            correctAnswerIndex = 0;
+            var roundAnswers = ["No", "Sometimes", "Regularly"];
 
                 var questionIndexForSpeech = currentQuestionIndex + 1,
                 repromptText = "Question " + questionIndexForSpeech.toString() + ". " + spokenQuestion + " ";
             for (var i = 0; i < ANSWER_COUNT; i++) {
-                repromptText += (i+1).toString() + ". " + Object.keys(questions[currentQuestionIndex])[i+1] + ". "
+                repromptText += (i+1).toString() + ". " + roundAnswers[i] + ", "
             }
             //speechOutput += userGaveUp ? "" : "That answer is ";
-            speechOutput += speechOutputAnalysis + "Your current score is " + currentScore.toString() + ". " + repromptText;
+            speechOutput += repromptText;
 
             sessionAttributes = {
                 "speechOutput": repromptText,
@@ -350,9 +360,9 @@ function handleAnswerRequest(intent, session, callback) {
                 "currentQuestionIndex": currentQuestionIndex,
                 "correctAnswerIndex": correctAnswerIndex,
                 "questions": gameQuestions,
-                "score": currentScore
-                //"correctAnswerText":
-                    //questions[gameQuestions[currentQuestionIndex]][Object.keys(questions[gameQuestions[currentQuestionIndex]])[0]][0]
+                "score": currentScore,
+                "correctAnswerText":
+                    questions[gameQuestions[currentQuestionIndex]][Object.keys(questions[gameQuestions[currentQuestionIndex]])[0]][0]
             };
             callback(sessionAttributes,
                 buildSpeechletResponse(CARD_TITLE, speechOutput, repromptText, false));
@@ -398,9 +408,7 @@ function handleFinishSessionRequest(intent, session, callback) {
 }
 
 function isAnswerSlotValid(intent) {
-    var answerSlotFilled = intent.slots && intent.slots.Answer && intent.slots.Answer.value;
-    var answerSlotIsInt = answerSlotFilled && !isNaN(parseInt(intent.slots.Answer.value));
-    return answerSlotIsInt && parseInt(intent.slots.Answer.value) < (ANSWER_COUNT + 1) && parseInt(intent.slots.Answer.value) > 0;
+    return !isNaN(parseInt(intent.slots.Answer.value)) && parseInt(intent.slots.Answer.value) < 4 && parseInt(intent.slots.Answer.value) > 0;
 }
 
 // ------- Helper functions to build responses -------
