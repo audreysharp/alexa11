@@ -250,7 +250,7 @@ function onSessionEnded(sessionEndedRequest, session) {
 
 var GAME_LENGTH = 18;
 var ANSWER_COUNT = 3;
-var CARD_TITLE = "Quiz";
+var CARD_TITLE = "Depression Assessment";
 
 function getWelcomeResponse(callback){
     var sessionAttributes = {},
