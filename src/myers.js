@@ -249,8 +249,9 @@ var CARD_TITLE = "Quiz";
 
 function getWelcomeResponse(callback){
     var sessionAttributes = {},
-    speechOutput = "Wikipedia defines domestic violence as a pattern of behavior which involves violence or other abuse by one person against another in a domestic setting. I will ask you " + GAME_LENGTH.toString()
-            + " questions, please answer these questions honestly to get an accurate assessment of the health of your relationship. Let's begin. ",
+    speechOutput = "Wikipedia defines The Myers–Briggs Type Indicator (MBTI) as an introspective self-report questionnaire designed to indicate psychological preferences in how people perceive the world and make decisions."
+    + "I will ask you " + GAME_LENGTH.toString()
+            + " questions, to determine your four letter Myers Brigg Personality Type. Let's begin. ",
             shouldEndSession = false,
             gameQuestions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
             correctAnswerIndex = 0, //roundAnswers deleted
@@ -259,10 +260,12 @@ function getWelcomeResponse(callback){
             spokenQuestion = Object.keys(questions[gameQuestions[currentQuestionIndex]])[0],
             repromptText = "Question 1. " + spokenQuestion + " ",
             i, j;
+            var answers = questions[gameQuestions[currentQuestionIndex]][Object.keys(questions[gameQuestions[currentQuestionIndex]])[0]];
             for (i = 0; i < ANSWER_COUNT; i++) {
                 //repromptText += (i+1).toString() + ". " + Object.keys(questions[currentQuestionIndex])[i+1] + ". "
-                repromptText += (i+1).toString() + ". " + Object.keys(questions[gameQuestions[currentQuestionIndex]])[i+1]+ ", "
+                repromptText += (i+1).toString() + ". " + answers[i] + ", ";
             }
+            console.log(answers);
     speechOutput += repromptText;
     sessionAttributes = {
         "speechOutput": repromptText,
@@ -291,7 +294,6 @@ function handleAnswerRequest(intent, session, callback) {
     var speechOutputAnalysis = "";
     var userGaveUp = intent.name === "DontKnowIntent";
 
-    console.log("intent test " + intent);
     console.log(intent);
 
     if (!gameInProgress) {
@@ -348,7 +350,7 @@ function handleAnswerRequest(intent, session, callback) {
         // if currentQuestionIndex is 4, we've reached 5 questions (zero-indexed) and can exit the game session
         if (currentQuestionIndex == GAME_LENGTH - 1) {
             speechOutput = "";
-            speechOutput += speechOutputAnalysis + "Your Myers-Brigg personality type is "
+            speechOutput += speechOutputAnalysis + "Your Myers-Briggs personality type is "
             if (currentVersion < 0)
             {
                 speechOutput += "E"
@@ -395,8 +397,9 @@ function handleAnswerRequest(intent, session, callback) {
 
                 var questionIndexForSpeech = currentQuestionIndex + 1,
                 repromptText = "Question " + questionIndexForSpeech.toString() + ". " + spokenQuestion + " ";
+                var answers = questions[gameQuestions[currentQuestionIndex]][Object.keys(questions[gameQuestions[currentQuestionIndex]])[0]];
             for (var i = 0; i < ANSWER_COUNT; i++) {
-                repromptText += (i+1).toString() + ". " + Object.keys(questions[gameQuestions[currentQuestionIndex]])[i+1] + ", "
+                repromptText += (i+1).toString() + ". " + answers[i] + ", "
             }
             //speechOutput += userGaveUp ? "" : "That answer is ";
             speechOutput += repromptText;
@@ -440,8 +443,8 @@ function handleGetHelpRequest(intent, session, callback) {
 
     // Do not edit the help dialogue. This has been created by the Alexa team to demonstrate best practices.
 
-    var speechOutput = "I will ask you " + GAME_LENGTH + " questions. Respond with the number of the answer. "
-        + "For example, say one, two, or three. To start a new test at any time, say, start test. "
+    var speechOutput = "I will ask you " + GAME_LENGTH + " questions. Respond with the number of the answer that you agree more with. "
+        + "For example, say one or two. To start a new test at any time, say, start test. "
         + "To repeat the last question, say, repeat. "
         + "Would you like to keep going?",
         repromptText = "To give an answer to a question, respond with the number of the answer . "
