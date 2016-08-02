@@ -216,6 +216,7 @@ function getWelcomeResponse(callback){
         "questions": gameQuestions,
         "coldScore": 0,
         "fluScore": 0,
+        "pneumoniaScore": 0,
         "correctAnswerText":
             questions[gameQuestions[currentQuestionIndex]][Object.keys(questions[gameQuestions[currentQuestionIndex]])[0]][0]
         //correct answer not relevant
@@ -234,6 +235,7 @@ function handleAnswerRequest(intent, session, callback) {
     var userGaveUp = intent.name === "DontKnowIntent";
     var coldScore = parseInt(session.attributes.coldScore);
     var fluScore = parseInt(session.attributes.fluScore);
+    var pneumoniaScore = parseInt(session.attributes.pneumoniaScore);
 
     console.log("intent test " + intent);
     console.log(intent);
@@ -258,6 +260,7 @@ function handleAnswerRequest(intent, session, callback) {
         if (answerSlotValid && intent.slots.Answer.value == "sore throat") {
             coldScore++;
             fluScore++;
+            pneumoniaScore++;
         }
         else if (answerSlotValid && intent.slots.Answer.value == "runny nose") {
             coldScore++;
@@ -270,26 +273,47 @@ function handleAnswerRequest(intent, session, callback) {
         else if (answerSlotValid && intent.slots.Answer.value == "cough") {
             coldScore++;
             fluScore++;
+            pneumoniaScore++;
         }
-        else if (answerSlotValid && intent.slots.Answer.value == "fever") {
+        else if (answerSlotValid && (intent.slots.Answer.value == "fever" || intent.slots.Answer.value == "chills")) {
             fluScore++;
+            pneumoniaScore++;
         }
         else if (answerSlotValid && intent.slots.Answer.value == "headache") {
             fluScore++;
         }
-        else if (answerSlotValid && intent.slots.Answer.value == "muscle soreness") {
+        else if (answerSlotValid && (intent.slots.Answer.value == "muscle soreness" || intent.slots.Answer.value == "muscle aches")) {
             fluScore++;
+            pneumoniaScore++;
+        }
+        else if (answerSlotValid && intent.slots.Answer.value == "fatigue") {
+            pneumoniaScore++;
+        }
+        else if (answerSlotValid && intent.slots.Answer.value == "enlarged lymph nodes") {
+            pneumoniaScore++;
+        }
+        else if (answerSlotValid && intent.slots.Answer.value == "chest pain") {
+            pneumoniaScore++;
+        }
+        else if (answerSlotValid && intent.slots.Answer.value == "shortness of breath") {
+            pneumoniaScore++;
         }
         if (answerSlotValid && intent.slots.Answer.value == "no more") {
             speechOutput = "";
-            if (fluScore > coldScore) {
+            if (fluScore > coldScore && fluScore > pneumoniaScore) {
                 speechOutput = "You probably have the flu. You should seek medical attention.";
             }
-            else if (fluScore + coldScore == 0) {
+            else if (fluScore + coldScore + pneumoniaScore === 0) {
                 speechOutput = "I'm sorry, I can't seem to figure out why you're not feeling well. Please seek medical assistance.";
             }
-            else if (fluScore == coldScore) {
+            else if (fluScore == coldScore && fluScore > pneumoniaScore) {
                 speechOutput = "You probably have a cold but you may have the flu. Over-the-counter cold medicine can be used to relieve these symptoms. If you experience fever, headache, or muscle soreness, you should seek medical attention.";
+            }
+            else if (pneumoniaScore == fluScore) {
+                speechOutput = "You probably have a cold but you may have the flu or pneumonia. Over-the-counter cold medicine can be used to relieve these symptoms. If you experience fever, headache, or muscle soreness, you should seek medical attention.";
+            }
+            else if (pneumoniaScore > fluScore) {
+                speechOutput = "You probably have a pneumonia. You should seek medical attention.";
             }
             callback(session.attributes,
                 buildSpeechletResponse(CARD_TITLE, speechOutput, "", true));
