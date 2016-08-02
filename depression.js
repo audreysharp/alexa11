@@ -142,9 +142,9 @@ exports.handler = function (event, context) {
          * prevent someone else from configuring a skill that sends requests to this function.
          */
 
- //   if (event.session.application.applicationId !== "amzn1.ask.skill.6e5c876f-7507-4999-91ce-1b44b7e73c0f") {
-   //      context.fail("Invalid Application ID");
-    //}
+ if (event.session.application.applicationId !== "amzn1.ask.skill.855c5e3b-f21c-4866-a291-314df0c77e52") {
+      context.fail("Invalid Application ID");
+ }
 
         if (event.session.new) {
             onSessionStarted({requestId: event.request.requestId}, event.session);
@@ -254,8 +254,8 @@ var CARD_TITLE = "Quiz";
 
 function getWelcomeResponse(callback){
     var sessionAttributes = {},
-    speechOutput = "I will ask you " + GAME_LENGTH.toString()
-            + " questions, please answer these questions honestly to get an accurate assessment of the health of your relationship. Let's begin. ",
+    speechOutput = "Wikipedia defines depression as, a state of low mood and aversion to activity that can affect a person's thoughts, behavior, feelings, and sense of well being.  I will ask you " + GAME_LENGTH.toString()
+            + " questions, please answer these questions honestly to get an accurate assessment of your mental health. Let's begin. ",
             shouldEndSession = false,
             gameQuestions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
             correctAnswerIndex = 0, //roundAnswers deleted
