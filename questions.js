@@ -142,9 +142,9 @@ exports.handler = function (event, context) {
          * prevent someone else from configuring a skill that sends requests to this function.
          */
 
-    if (event.session.application.applicationId !== "amzn1.ask.skill.6e5c876f-7507-4999-91ce-1b44b7e73c0f") {
-         context.fail("Invalid Application ID");
-    }
+ //   if (event.session.application.applicationId !== "amzn1.ask.skill.6e5c876f-7507-4999-91ce-1b44b7e73c0f") {
+   //      context.fail("Invalid Application ID");
+    //}
 
         if (event.session.new) {
             onSessionStarted({requestId: event.request.requestId}, event.session);
@@ -216,8 +216,6 @@ function onIntent(intentRequest, session, callback) {
         handleAnswerRequest(intent, session, callback);
     } else if ("AnswerOnlyIntent" === intentName) {
         handleAnswerRequest(intent, session, callback);
-    } else if ("DontKnowIntent" === intentName) {
-        handleAnswerRequest(intent, session, callback);
     } else if ("AMAZON.YesIntent" === intentName) {
         handleAnswerRequest(intent, session, callback);
     } else if ("AMAZON.NoIntent" === intentName) {
@@ -250,7 +248,7 @@ function onSessionEnded(sessionEndedRequest, session) {
 
 var GAME_LENGTH = 18;
 var ANSWER_COUNT = 3;
-var CARD_TITLE = "Domestic Abuse";
+var CARD_TITLE = "Quiz";
 
 function getWelcomeResponse(callback){
     var sessionAttributes = {},
@@ -263,9 +261,9 @@ function getWelcomeResponse(callback){
             spokenQuestion = Object.keys(questions[currentQuestionIndex])[0],
             repromptText = "Question 1. " + spokenQuestion + " ",
             i, j;
- for (i = 0; i < ANSWER_COUNT; i++) {
-        repromptText += (i+1).toString() + ". " + Object.keys(questions[currentQuestionIndex])[i+1] + ". "
-    }
+            for (i = 0; i < ANSWER_COUNT; i++) {
+                repromptText += (i+1).toString() + ". " + Object.keys(questions[currentQuestionIndex])[i+1] + ". "
+            }
     speechOutput += repromptText;
     sessionAttributes = {
         "speechOutput": repromptText,
@@ -280,9 +278,6 @@ function getWelcomeResponse(callback){
         buildSpeechletResponse(CARD_TITLE, speechOutput, repromptText, shouldEndSession));
 
 }
-
-
-
 
 function handleAnswerRequest(intent, session, callback) {
     var speechOutput = "";
@@ -319,7 +314,7 @@ function handleAnswerRequest(intent, session, callback) {
         }
         // if currentQuestionIndex is 4, we've reached 5 questions (zero-indexed) and can exit the game session
         if (currentQuestionIndex == GAME_LENGTH - 1) {
-            //speechOutput = userGaveUp ? "" : "That answer is ";
+            speechOutput = "";
             speechOutput += speechOutputAnalysis + "Your final score is " + currentScore.toString() + " out of "
                 + GAME_LENGTH.toString() + ". ";
                 if (currentScore > 12) {
@@ -343,7 +338,7 @@ function handleAnswerRequest(intent, session, callback) {
                 var questionIndexForSpeech = currentQuestionIndex + 1,
                 repromptText = "Question " + questionIndexForSpeech.toString() + ". " + spokenQuestion + " ";
             for (var i = 0; i < ANSWER_COUNT; i++) {
-                repromptText += (i+1).toString() + ". " + Object.keys(questions[currentQuestionIndex])[i+1] + ". ";
+                repromptText += (i+1).toString() + ". " + Object.keys(questions[currentQuestionIndex])[i+1] + ". "
             }
             //speechOutput += userGaveUp ? "" : "That answer is ";
             speechOutput += speechOutputAnalysis + "Your current score is " + currentScore.toString() + ". " + repromptText;
@@ -354,7 +349,7 @@ function handleAnswerRequest(intent, session, callback) {
                 "currentQuestionIndex": currentQuestionIndex,
                 "correctAnswerIndex": correctAnswerIndex,
                 "questions": gameQuestions,
-                "score": currentScore,
+                "score": currentScore
                 //"correctAnswerText":
                     //questions[gameQuestions[currentQuestionIndex]][Object.keys(questions[gameQuestions[currentQuestionIndex]])[0]][0]
             };
@@ -454,4 +449,3 @@ function buildResponse(sessionAttributes, speechletResponse) {
         response: speechletResponse
     };
 }
-
